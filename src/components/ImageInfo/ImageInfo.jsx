@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback} from 'react';
 
 import { toast } from 'react-toastify';
 import ImageFallbackView from 'components/ImageFallbackView';
@@ -21,62 +21,49 @@ const Status = {
 // 'resolve' - выполнилось с результамом (хорошо)
 // 'resjected' - отклонено!
 
-export default function ImageInfo({ hitName}) {
-  const [request, setRequest] = useState('');
+export default function ImageInfo ({ hitName, page, setPage}) {
   const [hits, setHits] = useState([]);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState(Status.IDLE);
-  const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [alt, setAlt] = useState('');
   const [modal, setModal] = useState('');
   const load = false;
 
-  useEffect((prevProps, prevState) => {
-    const prevName = prevProps.hitName;
-    const nextName = hitName;
-    const prevPage = prevState.page;
-    const nextPage = page;
+  
 
-    const fetchAPI = () => {
-      const nextName = hitName;
-
-      ImageAPI.fetchImage(nextName, page)
+  const fetchAPI = useCallback((hitName, page, total) => {
+    if(!hitName.trim()) return
+      ImageAPI.fetchImage(hitName, page)
         .then(response => {
-          resetPage();
-          console.log(response);
-          setRequest(prev => {
-            setHits([...prev.hits, ...response?.hits]);
+            setHits(prev => [...prev, ...response?.hits]);
+            if (page === 1 && total < response?.totalHits) {
+              toast.success(`You found ${response?.totalHits} pictures`);
+            }
             setTotal(response?.totalHits);
             setStatus(
               response?.totalHits === 0 ? Status.REJECTED : Status.RESOLVED
             );
-          });
         })
         .catch(error => {
           setError(error);
           setStatus(Status.REJECTED);
         });
-    };
+    }, []);
+  
 
-    if (prevPage !== nextPage) {
-      fetchAPI();
-    }
+  useEffect(() => {
+  fetchAPI(hitName, page, total);
+}, [fetchAPI, hitName, page, total]);
 
-    if (prevName !== nextName) {
-      setStatus(Status.PENDING);
-      setHits([]);
-      setTotal(0);
-      fetchAPI(nextName);
-    }
+useEffect(() => {
+    setStatus(Status.PENDING);
+    setHits([]);
+    setTotal(0);
+}, [hitName]);
 
-    if (page === 1 && prevState.total < total) {
-      toast.success(`You found ${total} pictures`);
-    }
-  }, [hitName, page, total]);
 
   // =========================================================================
-
   // toggleModal = () => {
   //   this.setState(({ showModal }) => ({
   //     showModal: !showModal,
@@ -97,14 +84,7 @@ export default function ImageInfo({ hitName}) {
   };
 
   const loadMore = () => {
-    setPage(prevState => {
-      return { page: prevState.page + 1 };
-    });
-    console.log(request);
-  };
-
-  const resetPage = () => {
-    setPage(1);
+    setPage(prevState =>  prevState + 1 );
   };
 
   // const { hits, error, status, modal, alt, total, Load, page } = this.state;
@@ -122,9 +102,7 @@ export default function ImageInfo({ hitName}) {
   if (status === Status.REJECTED) {
     return (
       <ImageFallbackView
-        message={
-          error?.message || `No picture with name${hitName}!!`
-        }
+        message={error?.message || `No picture with name${hitName}!!`}
       />
     );
   }

@@ -7,16 +7,17 @@ import ImageInfo from 'components/ImageInfo';
 export default function App () {
 
   const [hitName, hitNameState] = useState('');
+  const [page, setPage] = useState(1);
 
   const handleFormSubmit = hitName => {
-
     hitNameState( hitName );
   };
 
+
     return (
       <div style={{ maxWidth: 1170, margin: '0 auto', padding: 20 }}>
-        <Searchbar qwe={handleFormSubmit} />
-        <ImageInfo hitName={hitName}/>
+        <Searchbar qwe={handleFormSubmit} setPage={setPage}/>
+        <ImageInfo hitName={hitName} page={page} setPage={setPage}/>
 
         <ToastContainer autoClose={3000} />
       </div>

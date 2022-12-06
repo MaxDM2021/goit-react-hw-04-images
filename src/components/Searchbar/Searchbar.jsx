@@ -11,7 +11,7 @@ import "components/Styles/styles.css"
 
 // const styles = { form: { marginBottom: 20 } };
 
-export default function Searchbar ({qwe}) {
+export default function Searchbar ({qwe, setPage}) {
 
   const [imageName, imageState] = useState('');
 
@@ -32,7 +32,7 @@ export default function Searchbar ({qwe}) {
       return toast.error('Введите название изображения!');
       
     }
-
+    setPage(1)
     qwe(imageName)
     imageState('');
   };
