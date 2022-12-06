@@ -36,6 +36,7 @@ export default function ImageInfo ({ hitName, page, setPage}) {
     if(!hitName.trim()) return
       ImageAPI.fetchImage(hitName, page)
         .then(response => {
+          setPage(1)
             setHits(prev => [...prev, ...response?.hits]);
             if (page === 1 && total < response?.totalHits) {
               toast.success(`You found ${response?.totalHits} pictures`);
@@ -54,10 +55,10 @@ export default function ImageInfo ({ hitName, page, setPage}) {
 
   useEffect(() => {
   fetchAPI(hitName, page, total);
-}, [fetchAPI, hitName, page, total]);
+}, [page, hitName]);
 
 useEffect(() => {
-    setStatus(Status.PENDING);
+    setStatus(Status.IDLE);
     setHits([]);
     setTotal(0);
 }, [hitName]);
