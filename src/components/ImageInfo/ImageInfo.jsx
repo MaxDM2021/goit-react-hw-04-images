@@ -53,9 +53,13 @@ export default function ImageInfo ({ hitName, page, setPage}) {
     }, []);
   
 
+// Как работает useEffect: Если page, hitName изменятся, запустится fetchAPI
+
   useEffect(() => {
   fetchAPI(hitName, page, total);
 }, [page, hitName]);
+
+// Как работает useEffect: Если hitName изменятся, запустятся все фунции вложенные в useEffect
 
 useEffect(() => {
     setStatus(Status.IDLE);

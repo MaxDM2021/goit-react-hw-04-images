@@ -8,7 +8,7 @@ const ImageGallery = ({ images = [], showModal }) => (
  <div>
     <ul className="ImageGallery" onClick={showModal} >
       {images.map(image => (
-        <ImageGalleryItem key={image.id} image={image} ></ImageGalleryItem>
+        <ImageGalleryItem image={image} ></ImageGalleryItem>
       ))}
     </ul>
   </div> );
