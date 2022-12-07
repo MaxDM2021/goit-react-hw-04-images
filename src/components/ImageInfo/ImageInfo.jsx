@@ -50,7 +50,7 @@ export default function ImageInfo ({ hitName, page, setPage}) {
           setError(error);
           setStatus(Status.REJECTED);
         });
-    }, []);
+    }, [setPage]);
   
 
 // Как работает useEffect: Если page, hitName изменятся, запустится fetchAPI
