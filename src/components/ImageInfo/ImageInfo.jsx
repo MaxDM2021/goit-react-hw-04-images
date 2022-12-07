@@ -57,6 +57,7 @@ export default function ImageInfo ({ hitName, page, setPage}) {
 
   useEffect(() => {
   fetchAPI(hitName, page, total);
+  //eslint-disable-next-line
 }, [page, hitName]);
 
 // Как работает useEffect: Если hitName изменятся, запустятся все фунции вложенные в useEffect
